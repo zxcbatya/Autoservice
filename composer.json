@@ -64,9 +64,7 @@
         "post-autoload-dump": [
             "Illuminate\\Foundation\\ComposerScripts::postAutoloadDump",
             "@php artisan package:discover --ansi",
-            "rm -fv public/vendor/dist || true && mkdir -p public/vendor || true && ln -s -r ./vendor/almasaeed2010/adminlte/dist public/vendor/dist",
-            "ln -s -r ./vendor/almasaeed2010/adminlte/plugins public/vendor/plugins || true",
-            "ln -s -r ./vendor/studio-42/elfinder public/vendor/elfinder-2.1.62 || true"
+            "@php scripts/publish-adminlte-assets.php"
         ],
         "post-update-cmd": [
             "@php artisan vendor:publish --tag=laravel-assets --ansi --force"

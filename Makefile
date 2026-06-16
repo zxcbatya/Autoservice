@@ -62,13 +62,19 @@ artisan-cmd:
 	@docker-compose exec --user=www-data php php artisan $(cmd)
 
 admin-lte:
-	@docker-compose exec --user=www-data php php artisan adminlte:install
+	@docker-compose exec --user=www-data php php scripts/publish-adminlte-assets.php
 
 crud-generator:
 	@docker-compose exec --user=www-data php php artisan vendor:publish --provider="Appzcoder\CrudGenerator\CrudGeneratorServiceProvider"
 
 npm-install:
 	@docker-compose run --rm node npm install
+
+yarn-install:
+	@docker-compose run --rm node yarn install --frozen-lockfile
+
+yarn-prod:
+	@docker-compose run --rm node yarn build
 
 yarn-watch:
 	@docker-compose run --rm node yarn dev

@@ -24,25 +24,41 @@ class RolesAndPermissionsSeeder extends Seeder
         $permissionsAdmin = [
             'use-crud',
             'use-admin-panel',
+            'use-sto-panel',
+        ];
+
+        $permissionsManager = [
+            'use-sto-panel',
         ];
 
         $permissionsByRole = [
             'admin' => $permissionsAdmin,
+            'manager' => $permissionsManager,
         ];
 
-        /* Admin */
-        foreach ($permissionsAdmin as $permission) {
-            Permission::create(['name' => $permission]);
-            $admin->givePermissionTo($permission);
+        $allPermissions = array_unique(array_merge($permissionsAdmin, $permissionsManager));
+
+        foreach ($allPermissions as $permission) {
+            Permission::firstOrCreate(['name' => $permission]);
         }
+
+        $admin->syncPermissions($permissionsAdmin);
 
         foreach ($permissionsByRole as $role => $permissions) {
-            $model = Role::create(['name' => $role]);
-            foreach ($permissions as $permission) {
-                $model->givePermissionTo($permission);
-            }
+            $model = Role::firstOrCreate(['name' => $role]);
+            $model->syncPermissions($permissions);
         }
 
-        $admin->assignRole('admin');
+        if (! $admin->hasRole('admin')) {
+            $admin->assignRole('admin');
+        }
+
+        $manager = User::query()->where('email', 'manager@example.com')->first();
+        if ($manager) {
+            $manager->syncPermissions($permissionsManager);
+            if (! $manager->hasRole('manager')) {
+                $manager->assignRole('manager');
+            }
+        }
     }
 }

@@ -23,13 +23,25 @@ class AppServiceProvider extends ServiceProvider
      *
      * @return void
      */
-    public function boot(): void {
-
+    public function boot(): void
+    {
         if (env('FORCE_HTTPS', false)) {
             URL::forceScheme('https');
         }
 
-        Blade::component('admin-menu', WidgetAdminMenu::class);
+        if (! $this->app->runningInConsole()) {
+            $host = request()->getHost();
 
+            if (in_array($host, ['localhost', '127.0.0.1'], true)) {
+                config([
+                    'session.domain' => null,
+                    'session.secure' => false,
+                ]);
+
+                URL::forceRootUrl(request()->getSchemeAndHttpHost());
+            }
+        }
+
+        Blade::component('admin-menu', WidgetAdminMenu::class);
     }
 }

@@ -17,7 +17,13 @@ class Authenticate extends Middleware
     public function handle($request, Closure $next, ...$guards)
     {
         $user = Auth::user();
-        if ($user === null || $user->is_admin === false) {
+        if ($user === null) {
+            return redirect()->guest(route('login'));
+        }
+
+        if (! $user->is_admin && ! $user->hasAnyRole(['admin', 'manager'])) {
+            Auth::logout();
+
             return redirect()->guest(route('login'));
         }
 

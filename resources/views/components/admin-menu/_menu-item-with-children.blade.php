@@ -1,7 +1,7 @@
 <li class="nav-item has-treeview {{$openParentClass }}">
     <a href="#"
        class="nav-link {{ $activeParentClass }}">
-        <i class="nav-icon far {{ $item['icon'] }}"></i>
+        <i class="nav-icon {{ str_contains($item['icon'] ?? '', 'fa-') ? $item['icon'] : 'fas '.$item['icon'] }}"></i>
         <p>
             {{ $item['text'] }}
             <i class="right fas fa-angle-down"></i>
